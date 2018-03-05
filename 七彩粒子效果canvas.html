@@ -1,0 +1,105 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+	<meta charset="UTF-8">
+	<title>Document</title>
+</head>
+<style type="text/css">
+	*{
+		margin: 0;
+		padding: 0;
+	}
+    body{
+    	overflow: hidden;
+    	background-color: #000;
+	}
+</style>
+<body>
+	<canvas></canvas>
+</body>
+<script type="text/javascript">
+	var canvas=document.querySelector("canvas"),Wx,Wy;
+	canvas.width = Wx = document.documentElement.clientWidth;
+	canvas.height = Wy = document.documentElement.clientHeight;
+	var COLOURS = [ '#69D2E7', '#A7DBD8', '#E0E4CC', '#F38630', '#FA6900', '#FF4E50', '#F9D423' ];
+	var particles=[];
+	ctx=canvas.getContext("2d");
+	requestAnimationFrame(activity);
+
+	function Particle(){};
+	Particle.prototype={
+		init:function(x,y,diameter){
+			this.x=x || 0;
+			this.y=y || 0;
+			this.color=random(COLOURS);
+			this.diameter=diameter || 10;
+			this.angle=random(0,Math.PI*2);
+			this.radius=random(2,8);
+			this.vx=Math.cos(this.angle)*this.radius;
+			this.vy=Math.sin(this.angle)*this.radius;
+ 		},
+ 		move:function(){
+ 			if(this.diameter < 0.01){
+ 				this.move = null;
+ 				this.draw = null;
+ 			}
+ 			this.x+=this.vx;
+			this.y+=this.vy;
+			this.vx+=Math.sin(this.angle)*.1;
+			this.vy+=Math.cos(this.angle)*.1;
+			this.vx*=.92;
+			this.vy*=.92;
+			this.diameter*=.9;
+ 		},
+ 		draw:function(){
+ 			ctx.beginPath();
+			ctx.arc(this.x, this.y,this.diameter, 0, Math.PI * 2, false);
+			ctx.fillStyle=this.color;
+			ctx.globalCompositeOperation="lighter";
+			ctx.fill();
+ 		}
+	};
+
+	canvas.addEventListener('mousemove',function(e){
+		e=e||window.event;
+	
+		for(var i=0;i<random( 1 , 20 );i++){
+			spawn( e.clientX, e.clientY);
+		}
+	});
+
+	function spawn(x,y){
+		if(particles.length > 1500){
+			particles.shift();
+		}
+		var particle = new Particle();
+		particle.init(x,y,random(4,50));
+		particles.push(particle);
+		particle = null;
+	};
+
+	function activity(){
+		ctx.clearRect(0,0,Wx,Wy);
+		for(var i=0,len=particles.length;i<len;i++){
+			if (particles[i]['move'] === null) continue
+			particles[i].draw();
+			particles[i].move();
+		}
+		requestAnimationFrame(activity);
+	};
+
+	function random(min,max){
+		if(isArray(min)){
+		    return min[Math.floor(Math.random()*min.length)];
+		}else{
+			return min+Math.random()*(max-min);
+		}
+		
+	};
+
+	function isArray(object){
+		return Object.prototype.toString.call(object) == '[object Array]';
+	};
+	
+</script>
+</html>
