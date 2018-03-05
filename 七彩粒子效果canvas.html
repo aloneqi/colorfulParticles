@@ -63,13 +63,13 @@
 	canvas.addEventListener('mousemove',function(e){
 		e=e||window.event;
 	
-		for(var i=0;i<random( 1 , 20 );i++){
+		for(var i=0;i<random( 5 , 20 );i++){
 			spawn( e.clientX, e.clientY);
 		}
 	});
 
 	function spawn(x,y){
-		if(particles.length > 1500){
+		if(particles.length > 800){
 			particles.shift();
 		}
 		var particle = new Particle();
